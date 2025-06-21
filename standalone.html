@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accountability Bubble</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        .animate-bounce {
+            animation: bounce 2s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const BubbleOverlay = ({ emoji, text, status }) => {
+            const getStatusColor = () => {
+                switch (status) {
+                    case 'focused':
+                        return 'from-green-400 to-blue-500';
+                    case 'distracted':
+                        return 'from-red-400 to-pink-500';
+                    default:
+                        return 'from-gray-400 to-gray-600';
+                }
+            };
+
+            const getTextColor = () => {
+                switch (status) {
+                    case 'focused':
+                        return 'text-green-100';
+                    case 'distracted':
+                        return 'text-red-100';
+                    default:
+                        return 'text-gray-100';
+                }
+            };
+
+            return (
+                <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-50">
+                    <div className="absolute top-4 right-4 pointer-events-auto">
+                        <div className={`
+                            relative bg-gradient-to-r ${getStatusColor()} 
+                            backdrop-blur-md bg-opacity-90 
+                            rounded-full px-4 py-2 
+                            shadow-lg border border-white/20
+                            transition-all duration-500 ease-in-out
+                            hover:scale-105 hover:shadow-xl
+                            max-w-xs
+                        `}>
+                            <div className="absolute -left-3 top-1/2 transform -translate-y-1/2">
+                                <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/30 shadow-lg">
+                                    <span className="text-2xl animate-bounce">{emoji}</span>
+                                </div>
+                            </div>
+                            
+                            <div className="ml-6 pr-2">
+                                <p className={`text-sm font-medium ${getTextColor()} leading-tight`}>
+                                    {text}
+                                </p>
+                            </div>
+                            
+                            <div className={`absolute inset-0 bg-gradient-to-r ${getStatusColor()} rounded-full blur-xl opacity-30 -z-10`}></div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const App = () => {
+            const [appStatus, setAppStatus] = useState('neutral');
+            const [message, setMessage] = useState({ emoji: '🙂', text: 'Starting up...' });
+
+            useEffect(() => {
+                const checkStatus = async () => {
+                    try {
+                        if (window.electron && window.electron.getStatus) {
+                            const status = await window.electron.getStatus();
+                            if (status !== appStatus) {
+                                setAppStatus(status);
+                                const newMessage = window.electron.getMessage(status);
+                                setMessage(newMessage);
+                            }
+                        } else {
+                            // Demo mode when electron APIs aren't available
+                            const statuses = ['focused', 'distracted', 'neutral'];
+                            const messages = {
+                                focused: [
+                                    { emoji: '🚀', text: 'Locked in. Beautiful.' },
+                                    { emoji: '🔥', text: 'You\'re doing hard things. Respect.' }
+                                ],
+                                distracted: [
+                                    { emoji: '😤', text: 'So get TF back to coding!' },
+                                    { emoji: '🙄', text: 'Your timeline won\'t build your startup' }
+                                ],
+                                neutral: [
+                                    { emoji: '🤷', text: 'Stay focused on what matters.' },
+                                    { emoji: '⏱️', text: 'Make it count.' }
+                                ]
+                            };
+                            
+                            // Cycle through different states for demo
+                            const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+                            const statusMessages = messages[randomStatus];
+                            const randomMessage = statusMessages[Math.floor(Math.random() * statusMessages.length)];
+                            
+                            setAppStatus(randomStatus);
+                            setMessage(randomMessage);
+                        }
+                    } catch (error) {
+                        console.error('Error checking app status:', error);
+                    }
+                };
+
+                checkStatus();
+                const interval = setInterval(checkStatus, 5000); // Check every 5 seconds
+                return () => clearInterval(interval);
+            }, [appStatus]);
+
+            return React.createElement(BubbleOverlay, { 
+                emoji: message.emoji, 
+                text: message.text, 
+                status: appStatus 
+            });
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(React.createElement(App));
+    </script>
+</body>
+</html> 
