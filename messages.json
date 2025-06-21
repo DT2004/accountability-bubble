@@ -1,0 +1,31 @@
+{
+  "distracted": {
+    "match": ["Twitter", "X.com", "Instagram", "Reddit", "YouTube"],
+    "messages": [
+      { "emoji": "😡", "text": "Bro stop DMing egirls on X" },
+      { "emoji": "😤", "text": "Your timeline won't build your startup" },
+      { "emoji": "😠", "text": "You're not gonna find inspiration in IG DMs" },
+      { "emoji": "😒", "text": "Reddit = rabbit hole. Escape now." },
+      { "emoji": "😬", "text": "1 video = OK. 7 videos = spiral." }
+    ]
+  },
+  "neutral": {
+    "match": ["Gmail", "Inbox", "Google Search", "Google", "LinkedIn"],
+    "messages": [
+      { "emoji": "😐", "text": "Answer that email and move on." },
+      { "emoji": "🤔", "text": "You sure this is part of the plan?" },
+      { "emoji": "😶", "text": "Don't let email pretend to be work." },
+      { "emoji": "😏", "text": "That LinkedIn post won't land you a job." }
+    ]
+  },
+  "focused": {
+    "match": ["Code", "Terminal", "Sublime", "Leetcode", "HackerRank", "Notion", "Docs", "Obsidian"],
+    "messages": [
+      { "emoji": "😌", "text": "Locked in. Proud of you." },
+      { "emoji": "🔥", "text": "Nice. Build that muscle." },
+      { "emoji": "🧠", "text": "Your second brain is growing 🧠" },
+      { "emoji": "🎯", "text": "You're doing hard things. Respect." },
+      { "emoji": "🚀", "text": "Momentum > motivation. Let's go." }
+    ]
+  }
+}
