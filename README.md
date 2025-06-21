@@ -26,7 +26,7 @@ A floating desktop agent that keeps you focused and accountable by monitoring yo
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/accountability-bubble.git
+git clone https://github.com/DT2004/accountability-bubble.git
 cd accountability-bubble
 ```
 
